@@ -12,16 +12,17 @@ public class Zombie : Enemy
     private GameObject target;
     private NavMeshAgent agent;
     private float knockbackTimer;
-
+    
     new void Start()
     {
         base.Start();
         agent = GetComponent<NavMeshAgent>();
         target = GameObject.FindGameObjectWithTag("Player");
     }
-    
-    void Update()
+
+    new void Update()
     {
+        base.Update();
         if (agent.enabled) agent.SetDestination(target.transform.position);
         else if (getCurrHealth() > 0)
         {
@@ -37,11 +38,14 @@ public class Zombie : Enemy
             Debug.Log("player hit!");
         }
     }
-    
+
     public override void takeDamage(Vector3 knockbackDirection, float knockbackForce, float dmgAmount)
     {
-        agent.enabled = false;
         base.takeDamage(knockbackDirection, knockbackForce, dmgAmount);
-        knockbackTimer = 0;
+        if (knockbackForce > 0)
+        {
+            knockbackTimer = 0;
+            agent.enabled = false;
+        }
     }
 }

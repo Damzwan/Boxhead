@@ -7,7 +7,6 @@ using Weapons;
 
 public class Shotgun : Weapon
 {
-    public GameObject bulletTrail;
     public int bulletAmount = 5;
     public float spreadAngle = 15f;
     public float grapplingForwardSpeed = 10f;
@@ -20,13 +19,10 @@ public class Shotgun : Weapon
     private bool altFireEnabled;
     private GameObject altFireHit;
     private bool shouldReleaseFirst;
-
-    private ParticleSystem ps;
-
+    
     new void Start()
     {
         base.Start();
-        ps = getFireLocation().Find("FX_Gunshot_01").GetComponent<ParticleSystem>(); //TODO generalize
         lr = GetComponent<LineRenderer>();
         lr.enabled = false;
     }
@@ -34,7 +30,7 @@ public class Shotgun : Weapon
     public override void fire()
     {
         if (!canFire()) return;
-        ps.Play();
+        getPS().Play();
         var angle = determineShootAngle();
         var startAngle = angle - (bulletAmount / 2) * spreadAngle;
         var firePos = getFireLocation().position;
@@ -63,11 +59,10 @@ public class Shotgun : Weapon
         {
             lr.enabled = true;
             altFireEnabled = true;
-            altFireDir = determineShootDirection();
             altFirePos = firePos;
         }
 
-        if (!(altFireHit is null)) altFireDir = (transform.position - altFirePos).normalized;
+        altFireDir = !(altFireHit is null) ? (firePos - altFirePos).normalized : determineShootDirection();
         var speed = altFireHit is null ? grapplingForwardSpeed : grapplingBackwardSpeed;
         altFirePos += altFireDir * (speed * Time.deltaTime);
 
@@ -128,22 +123,5 @@ public class Shotgun : Weapon
             hit.collider.GetComponent<Enemy>().takeDamage(dir, impactForce, damage);
         }
         else drawBulletTrail(firePos, firePos + dir * range);
-    }
-
-    private void drawBulletTrail(Vector3 start, Vector3 end)
-    {
-        GameObject bulletTrailEffect = Instantiate(bulletTrail, start, Quaternion.identity);
-        LineRenderer lineRenderer = bulletTrailEffect.GetComponent<LineRenderer>();
-        lineRenderer.SetPosition(0, start);
-        lineRenderer.SetPosition(1, end);
-        Destroy(bulletTrailEffect, 1f);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, grapplingRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, range); 
     }
 }

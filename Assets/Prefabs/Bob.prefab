@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7998596069465860746}
   - component: {fileID: 7998596069465860749}
   m_Layer: 0
-  m_Name: SM_Chr_Biker_Male_01
+  m_Name: Bob
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.8
+  m_Height: 2
   m_Radius: 0.35
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -114,12 +114,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf1bf8d8782b064cbe81e50b1aca283, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camPos: {fileID: 0}
-  rotationOffset: 22.5
-  turnSmoothTime: 0.1
+  rotationOffset: {x: 0, y: 0, z: 0}
   speed: 8
   rollSpeed: 12
   rollDuration: 0.5
+  camSmoothing: 5
 --- !u!114 &7998596069465860749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e16a15fd92167ed45aadb51e1507e22a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxWeaponSize: 3
 --- !u!1 &7999587048676106026
 GameObject:
   m_ObjectHideFlags: 0

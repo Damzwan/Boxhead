@@ -11,10 +11,10 @@ public class CharController : MonoBehaviour
     public float rollSpeed = 10f;
     public float rollDuration = 0.5f;
     public float camSmoothing = 5f;
-    
+
     private CharacterController controller;
     private Camera cam;
-    
+
     private float turnSmoothVelocity;
     private Vector3 camOffset;
     private float gravity;
@@ -30,13 +30,15 @@ public class CharController : MonoBehaviour
     private static readonly int IsRolling = Animator.StringToHash("isRolling");
 
     int floorMask; // A layer mask so that a ray can be cast just at gameobjects on the floor layer.
+    private static readonly int RollSpeed = Animator.StringToHash("rollSpeed");
 
     // Start is called before the first frame update
     void Start()
     {
-        floorMask = LayerMask.GetMask ("Ground");
+        floorMask = LayerMask.GetMask("Ground");
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
+        anim.SetFloat(RollSpeed, 2.367f / rollDuration);
         cam = Camera.main;
         camOffset = cam.transform.position - transform.position;
     }
@@ -87,7 +89,7 @@ public class CharController : MonoBehaviour
         if (isRolling) return;
         isRolling = true;
         rollDir = isMoving() ? moveDir : lookDir;
-        
+
         var angle = Mathf.Atan2(rollDir.x, rollDir.z) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, angle, 0);
 
@@ -100,7 +102,7 @@ public class CharController : MonoBehaviour
         if (isRolling) return;
         Ray camRay = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit floorhit;
-        
+
         if (Physics.Raycast(camRay, out floorhit, 100, floorMask))
         {
             var t = transform;
@@ -118,9 +120,9 @@ public class CharController : MonoBehaviour
             var angle = angleBetweenVector2(moveDir, lookDir);
             var absoluteAngle = Math.Abs(angle);
             int dir;
-            if (absoluteAngle <= 45) dir = 1;
+            if (absoluteAngle <= 45) dir = 0;
             else if (absoluteAngle > 45 && absoluteAngle < 135) dir = angle > 0 ? 2 : 3;
-            else dir = 0;
+            else dir = 1;
             anim.SetInteger(Walk, dir);
         }
         else anim.SetInteger(Walk, -1);
@@ -141,13 +143,13 @@ public class CharController : MonoBehaviour
         if (controller.isGrounded) gravity = 0;
         controller.Move(new Vector3(0, gravity, 0) * Time.deltaTime);
     }
-    
-    
+
+
     //TODO make own script maybe
     private void FixedUpdate()
     {
         var pos = transform.position;
         var targetCamPos = new Vector3(pos.x, 0, pos.z) + camOffset;
-        cam.transform.position = Vector3.Lerp (cam.transform.position, targetCamPos, camSmoothing * Time.deltaTime);
+        cam.transform.position = Vector3.Lerp(cam.transform.position, targetCamPos, camSmoothing * Time.deltaTime);
     }
 }
